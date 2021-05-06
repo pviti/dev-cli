@@ -83,7 +83,7 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
   usage(config: Config.IConfig): string {
     return [
       `\`\`\`sh-session
-$ ${config.bin} COMMAND
+$ ${config.bin} | clayer | cl) COMMAND
 
 $ ${config.bin} (-v | version | --version) to check the version of the CLI you have installed.
 
@@ -97,7 +97,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
   multiCommands(config: Config.IConfig, commands: Config.Command[], dir: string): string {
     let topics = config.topics
     topics = topics.filter(t => !t.hidden && !t.name.includes(':'))
-    topics = topics.filter(t => commands.find(c => c.id.startsWith(t.name) && !c.hidden))
+    topics = topics.filter(t => commands.find(c => c.id.startsWith(t.name)))
     topics = sortBy(topics, t => t.name)
     topics = uniqBy(topics, t => t.name)
     for (const topic of topics) {
@@ -137,7 +137,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
 
   commands(config: Config.IConfig, commands: Config.Command[]): string {
     return [
-      ...commands.map(c => {
+      ...commands.filter(c => !c.hidden).map(c => {
         const usage = this.commandUsage(config, c)
         return `* [\`${config.bin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
       }),
