@@ -1,14 +1,14 @@
 // tslint:disable no-implicit-dependencies
-import {Command, flags} from '@oclif/command'
+import { Command, flags } from '@oclif/command'
 import * as Config from '@oclif/config'
-import {getHelpClass} from '@oclif/plugin-help'
+import { getHelpClass } from '@oclif/plugin-help'
 import * as fs from 'fs-extra'
 import * as _ from 'lodash'
 import * as path from 'path'
-import {URL} from 'url'
+import { URL } from 'url'
 
-import {castArray, compact, sortBy, template, uniqBy} from '../util'
-import {HelpCompatibilityWrapper} from '../help-compatibility'
+import { castArray, compact, sortBy, template, uniqBy } from '../util'
+import { HelpCompatibilityWrapper } from '../help-compatibility'
 
 const normalize = require('normalize-package-data')
 const columns = parseInt(process.env.COLUMNS!, 10) || 120
@@ -26,23 +26,23 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
 `
 
   static flags = {
-    dir: flags.string({description: 'output directory for multi docs', default: 'docs', required: true}),
-    multi: flags.boolean({description: 'create a different markdown page for each topic'}),
+    dir: flags.string({ description: 'output directory for multi docs', default: 'docs', required: true }),
+    multi: flags.boolean({ description: 'create a different markdown page for each topic' }),
   }
 
   async run() {
-    const {flags} = this.parse(Readme)
+    const { flags } = this.parse(Readme)
     const cwd = process.cwd()
     const readmePath = path.resolve(cwd, 'README.md')
-    const config = await Config.load({root: cwd, devPlugins: false, userPlugins: false})
+    const config = await Config.load({ root: cwd, devPlugins: false, userPlugins: false })
 
     try {
-      const p = require.resolve('@oclif/plugin-legacy', {paths: [cwd]})
-      const plugin = new Config.Plugin({root: p, type: 'core'})
+      const p = require.resolve('@oclif/plugin-legacy', { paths: [cwd] })
+      const plugin = new Config.Plugin({ root: p, type: 'core' })
       await plugin.load()
       config.plugins.push(plugin)
-    } catch {}
-    await (config as Config.Config).runHook('init', {id: 'readme', argv: this.argv})
+    } catch { }
+    await (config as Config.Config).runHook('init', { id: 'readme', argv: this.argv })
     let readme = await fs.readFile(readmePath, 'utf8')
 
     let commands = config.commands
@@ -73,9 +73,9 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
 
   toc(__: Config.IConfig, readme: string): string {
     return readme.split('\n').filter(l => l.startsWith('# '))
-    .map(l => l.trim().slice(2))
-    .map(l => `* [${l}](#${slugify.slug(l)})`)
-    .join('\n')
+      .map(l => l.trim().slice(2))
+      .map(l => `* [${l}](#${slugify.slug(l)})`)
+      .join('\n')
   }
 
   usage(config: Config.IConfig): string {
@@ -110,11 +110,11 @@ USAGE
     }
 
     return [
-      '# Command Topics\n',
+      '# Command Topics [MODIFIED VERSION]\n',
       ...topics.map(t => {
         return compact([
           `* [\`${config.bin} ${t.name}\`](${dir}/${t.name.replace(/:/g, '/')}.md)`,
-          template({config})(t.description || '').trim().split('\n')[0],
+          template({ config })(t.description || '').trim().split('\n')[0],
         ]).join(' - ')
       }),
     ].join('\n').trim() + '\n'
@@ -126,7 +126,7 @@ USAGE
       bin,
       '='.repeat(bin.length),
       '',
-      template({config})(topic.description || '').trim(),
+      template({ config })(topic.description || '').trim(),
       '',
       this.commands(config, commands),
     ].join('\n').trim() + '\n'
@@ -146,9 +146,9 @@ USAGE
 
   renderCommand(config: Config.IConfig, c: Config.Command): string {
     this.debug('rendering command', c.id)
-    const title = template({config, command: c})(c.description || '').trim().split('\n')[0]
+    const title = template({ config, command: c })(c.description || '').trim().split('\n')[0]
     const HelpClass = getHelpClass(config)
-    const help = new HelpClass(config, {stripAnsi: true, maxWidth: columns})
+    const help = new HelpClass(config, { stripAnsi: true, maxWidth: columns })
     const wrapper = new HelpCompatibilityWrapper(help)
 
     const header = () => `## \`${config.bin} ${this.commandUsage(config, c)}\``
@@ -181,11 +181,11 @@ USAGE
       version = process.env.OCLIF_NEXT_VERSION || version
     }
     const template = plugin.pjson.oclif.repositoryPrefix || '<%- repo %>/blob/v<%- version %>/<%- commandPath %>'
-    return `_See code: [${label}](${_.template(template)({repo, version, commandPath, config, c})})_`
+    return `_See code: [${label}](${_.template(template)({ repo, version, commandPath, config, c })})_`
   }
 
   private repo(plugin: Config.IPlugin): string | undefined {
-    const pjson = {...plugin.pjson}
+    const pjson = { ...plugin.pjson }
     normalize(pjson)
     const repo = pjson.repository && pjson.repository.url
     if (!repo) return
@@ -241,6 +241,6 @@ USAGE
       ]).join(' ')
     }
     const usages = castArray(command.usage)
-    return template({config, command})(usages.length === 0 ? defaultUsage() : usages[0])
+    return template({ config, command })(usages.length === 0 ? defaultUsage() : usages[0])
   }
 }
