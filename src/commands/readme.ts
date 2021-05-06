@@ -73,7 +73,8 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
   }
 
   toc(__: Config.IConfig, readme: string): string {
-    return readme.split('\n').filter(l => l.startsWith('# '))
+    // return readme.split('\n').filter(l => l.startsWith('# '))
+    return readme.split('\n').filter(l => l.startsWith('## ') && !l.includes('Table of contents') && !l.includes('What is Commerce Layer'))
       .map(l => l.trim().slice(2))
       .map(l => `* [${l}](#${slugify.slug(l)})`)
       .join('\n')
