@@ -68,8 +68,7 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
       }
       this.log(`replacing <!-- ${tag} --> in README.md`)
     }
-    // return readme.replace(`<!-- ${tag} -->`, `<!-- ${tag} -->\n${body}\n<!-- ${tag}stop -->`)
-    return readme.replace(`<!-- ${tag} -->`, `<!-- ${tag} -->${body}<!-- ${tag}stop -->`)
+    return readme.replace(`<!-- ${tag} -->`, `<!-- ${tag} -->\n${body}\n<!-- ${tag}stop -->`)
   }
 
   toc(__: Config.IConfig, readme: string): string {
