@@ -83,7 +83,7 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
   usage(config: Config.IConfig): string {
     return [
       `\`\`\`sh-session
-$ (${config.bin} | clayer | cl) COMMAND
+$ ${config.bin} COMMAND
 
 $ ${config.bin} (-v | version | --version) to check the version of the CLI you have installed.
 
@@ -97,7 +97,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
   multiCommands(config: Config.IConfig, commands: Config.Command[], dir: string): string {
     let topics = config.topics
     topics = topics.filter(t => !t.hidden && !t.name.includes(':'))
-    topics = topics.filter(t => commands.find(c => c.id.startsWith(t.name)))
+    topics = topics.filter(t => commands.find(c => c.id.startsWith(t.name) && !c.hidden))
     topics = sortBy(topics, t => t.name)
     topics = uniqBy(topics, t => t.name)
     for (const topic of topics) {
@@ -123,11 +123,12 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
 
   createTopicFile(file: string, config: Config.IConfig, topic: Config.Topic, commands: Config.Command[]) {
     const bin = `\`${config.bin} ${topic.name}\``
+    const t = topic
     const doc = [
       bin,
       '='.repeat(bin.length),
       '',
-      template({ config })(topic.description || '').trim(),
+      template({ config })(t.description ? `${t.description.charAt(0).toUpperCase()}${t.description.substring(1)}.` : '').trim(),
       '',
       this.commands(config, commands),
     ].join('\n').trim() + '\n'
@@ -152,12 +153,14 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
     const help = new HelpClass(config, { stripAnsi: true, maxWidth: columns })
     const wrapper = new HelpCompatibilityWrapper(help)
 
-    const header = () => `## \`${config.bin} ${this.commandUsage(config, c)}\``
+    // const header = () => `## \`${config.bin} ${this.commandUsage(config, c)}\``
+    const header = () => `### \`${config.bin} ${this.commandUsage(config, c)}\``
 
     try {
       return compact([
         header(),
-        title,
+        // title,
+        title.charAt(0).toUpperCase + title.substring(1),
         '```\n' + wrapper.formatCommand(c).trim() + '\n```',
         this.commandCode(config, c),
       ]).join('\n\n')
