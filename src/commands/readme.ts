@@ -68,7 +68,8 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
       }
       this.log(`replacing <!-- ${tag} --> in README.md`)
     }
-    return readme.replace(`<!-- ${tag} -->`, `<!-- ${tag} -->\n${body}\n<!-- ${tag}stop -->`)
+    // return readme.replace(`<!-- ${tag} -->`, `<!-- ${tag} -->\n${body}\n<!-- ${tag}stop -->`)
+    return readme.replace(`<!-- ${tag} -->`, `<!-- ${tag} -->${body}<!-- ${tag}stop -->`)
   }
 
   toc(__: Config.IConfig, readme: string): string {
@@ -110,11 +111,12 @@ USAGE
     }
 
     return [
-      '# Command Topics [MODIFIED VERSION]\n',
+      '\n',
+      // '# Command Topics\n',
       ...topics.map(t => {
         return compact([
           `* [\`${config.bin} ${t.name}\`](${dir}/${t.name.replace(/:/g, '/')}.md)`,
-          template({ config })(t.description || '').trim().split('\n')[0],
+          template({ config })(t.description ? `${t.description.charAt(0).toUpperCase()}${t.description.substring(1)}.` : '').trim().split('\n')[0],
         ]).join(' - ')
       }),
     ].join('\n').trim() + '\n'
