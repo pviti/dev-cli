@@ -163,7 +163,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
       return compact([
         header(),
         // title,
-        title.charAt(0).toUpperCase + title.substring(1),
+        formatDescription(title),
         '```\n' + wrapper.formatCommand(c).trim() + '\n```',
         this.commandCode(config, c),
       ]).join('\n\n')
