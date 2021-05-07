@@ -14,6 +14,11 @@ const normalize = require('normalize-package-data')
 const columns = parseInt(process.env.COLUMNS!, 10) || 120
 const slugify = new (require('github-slugger') as any)()
 
+
+const formatDescription = (d: string | undefined): string => {
+  return d ? `${d.charAt(0).toUpperCase()}${d.substring(1)}.` : ''
+}
+
 export default class Readme extends Command {
   static description = `adds commands to README.md in current directory
 The readme must have any of the following tags inside of it for it to be replaced or else it will do nothing:
@@ -83,12 +88,10 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
   usage(config: Config.IConfig): string {
     return [
       `\`\`\`sh-session
-$ ${config.bin} | clayer | cl) COMMAND
+$ ${config.bin} COMMAND
 
 $ ${config.bin} (-v | version | --version) to check the version of the CLI you have installed.
 
-$ ${config.bin} help [COMMAND]
-or
 $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI commands.
 \`\`\`\n`,
     ].join('\n').trim()
@@ -115,7 +118,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
       ...topics.map(t => {
         return compact([
           `* [\`${config.bin} ${t.name}\`](${dir}/${t.name.replace(/:/g, '/')}.md)`,
-          template({ config })(t.description ? `${t.description.charAt(0).toUpperCase()}${t.description.substring(1)}.` : '').trim().split('\n')[0],
+          template({ config })(formatDescription(t.description)).trim().split('\n')[0],
         ]).join(' - ')
       }),
     ].join('\n').trim() + '\n'
@@ -128,7 +131,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
       bin,
       '='.repeat(bin.length),
       '',
-      template({ config })(t.description ? `${t.description.charAt(0).toUpperCase()}${t.description.substring(1)}.` : '').trim(),
+      template({ config })(formatDescription(t.description)).trim(),
       '',
       this.commands(config, commands),
     ].join('\n').trim() + '\n'
@@ -137,7 +140,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
 
   commands(config: Config.IConfig, commands: Config.Command[]): string {
     return [
-      ...commands.filter(c => !c.hidden).map(c => {
+      ...commands.map(c => {
         const usage = this.commandUsage(config, c)
         return `* [\`${config.bin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
       }),
@@ -148,7 +151,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
 
   renderCommand(config: Config.IConfig, c: Config.Command): string {
     this.debug('rendering command', c.id)
-    const title = template({ config, command: c })(c.description || '').trim().split('\n')[0]
+    const title = template({ config, command: c })(formatDescription(c.description)).trim().split('\n')[0]
     const HelpClass = getHelpClass(config)
     const help = new HelpClass(config, { stripAnsi: true, maxWidth: columns })
     const wrapper = new HelpCompatibilityWrapper(help)
