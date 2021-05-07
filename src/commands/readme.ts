@@ -162,8 +162,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
     try {
       return compact([
         header(),
-        // title,
-        formatDescription(title),
+        title,
         '```\n' + wrapper.formatCommand(c).trim() + '\n```',
         this.commandCode(config, c),
       ]).join('\n\n')
