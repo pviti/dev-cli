@@ -39,7 +39,7 @@ const aws = {
         endpoint: process.env.AWS_S3_ENDPOINT,
       })
       return cache.s3
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === 'MODULE_NOT_FOUND') throw new Error(`${error.message}\naws-sdk is needed to run this command.\nInstall aws-sdk as a devDependency in your CLI. \`yarn add -D aws-sdk\``)
       throw error
     }
@@ -53,7 +53,7 @@ const aws = {
 export default {
   get cloudfront() {
     return {
-      createCloudfrontInvalidation: (options: CloudFront.Types.CreateInvalidationRequest) => new Promise((resolve, reject) => {
+      createCloudfrontInvalidation: (options: CloudFront.Types.CreateInvalidationRequest) => new Promise<void>((resolve, reject) => {
         log('createCloudfrontInvalidation', options.DistributionId, options.InvalidationBatch.Paths.Items)
         aws.cloudfront.createInvalidation(options, err => {
           if (err) reject(err)
@@ -64,7 +64,7 @@ export default {
   },
   get s3() {
     return {
-      uploadFile: (local: string, options: S3.Types.PutObjectRequest) => new Promise((resolve, reject) => {
+      uploadFile: (local: string, options: S3.Types.PutObjectRequest) => new Promise<void>((resolve, reject) => {
         log('s3:uploadFile', qq.prettifyPaths(local), `s3://${options.Bucket}/${options.Key}`)
         options.Body = fs.createReadStream(local)
         aws.s3.upload(options, err => {

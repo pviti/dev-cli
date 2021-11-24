@@ -166,7 +166,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
         '```\n' + wrapper.formatCommand(c).trim() + '\n```',
         this.commandCode(config, c),
       ]).join('\n\n')
-    } catch (error) {
+    } catch (error: any) {
       this.error(error.message)
     }
   }
@@ -186,7 +186,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
       label = commandPath
       version = process.env.OCLIF_NEXT_VERSION || version
     }
-    const template = plugin.pjson.oclif.repositoryPrefix || '<%- repo %>/blob/v<%- version %>/<%- commandPath %>'
+    const template = plugin.pjson.oclif.repositoryPrefix || '<%- repo %>/blob/master/<%- commandPath %>' // '<%- repo %>/blob/v<%- version %>/<%- commandPath %>'
     return `_See code: [${label}](${_.template(template)({ repo, version, commandPath, config, c })})_`
   }
 

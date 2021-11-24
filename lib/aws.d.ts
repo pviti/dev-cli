@@ -11,11 +11,11 @@ export declare namespace upload {
 }
 declare const _default: {
     readonly cloudfront: {
-        createCloudfrontInvalidation: (options: CloudFront.CreateInvalidationRequest) => Promise<unknown>;
+        createCloudfrontInvalidation: (options: CloudFront.Types.CreateInvalidationRequest) => Promise<void>;
     };
     readonly s3: {
-        uploadFile: (local: string, options: S3.PutObjectRequest) => Promise<unknown>;
-        headObject: (options: S3.HeadObjectRequest) => Promise<S3.HeadObjectOutput>;
+        uploadFile: (local: string, options: S3.Types.PutObjectRequest) => Promise<void>;
+        headObject: (options: S3.Types.HeadObjectRequest) => Promise<S3.HeadObjectOutput>;
     };
 };
 export default _default;
