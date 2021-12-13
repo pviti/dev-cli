@@ -5,6 +5,7 @@ export default class Readme extends Command {
     static flags: {
         dir: flags.IOptionFlag<string>;
         multi: import("@oclif/parser/lib/flags").IBooleanFlag<boolean>;
+        plugin: import("@oclif/parser/lib/flags").IBooleanFlag<boolean>;
     };
     run(): Promise<void>;
     replaceTag(readme: string, tag: string, body: string): string;
