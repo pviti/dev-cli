@@ -99,7 +99,6 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
   }
 
   multiCommands(config: Config.IConfig, commands: Config.Command[], dir: string): string {
-    console.log('MULTI')
     let topics = config.topics
     topics = topics.filter(t => !t.hidden && !t.name.includes(':'))
     topics = topics.filter(t => commands.find(c => c.id.startsWith(t.name)))
@@ -141,17 +140,14 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
   }
 
   commands(config: Config.IConfig, commands: Config.Command[], plugin?: boolean): string {
-    console.log('COMMANDS')
     return [
       ...commands.map(c => {
-        const usage = this.commandUsage(config, c)
+        let usage = this.commandUsage(config, c)
+        if (plugin) usage = usage.replace(config.bin, 'commercelayer')
         return `* [\`${config.bin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
       }),
       '',
-      ...commands.map(c => this.renderCommand(config, c)).map(s => {
-        console.log(s)
-        return (plugin ? s.replace(config.bin, 'commercelayer') : s).trim() + '\n'
-      }),
+      ...commands.map(c => this.renderCommand(config, c)).map(s => s.trim() + '\n'),
     ].join('\n').trim()
   }
 
