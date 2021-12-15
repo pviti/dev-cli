@@ -33,7 +33,8 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
   static flags = {
     dir: flags.string({ description: 'output directory for multi docs', default: 'docs', required: true }),
     multi: flags.boolean({ description: 'create a different markdown page for each topic' }),
-    plugin: flags.boolean({ description: 'create a plugin readme doc' })
+    plugin: flags.boolean({ description: 'create a plugin readme doc' }),
+    bin: flags.string({ description: 'optional main cli command', dependsOn: ['plugin'] })
   }
 
   async run() {
@@ -41,6 +42,8 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
     const cwd = process.cwd()
     const readmePath = path.resolve(cwd, 'README.md')
     const config = await Config.load({ root: cwd, devPlugins: false, userPlugins: false })
+
+    if (flags.bin) config.bin = flags.bin
 
     try {
       const p = require.resolve('@oclif/plugin-legacy', { paths: [cwd] })
@@ -58,7 +61,7 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
     commands = uniqBy(commands, c => c.id)
     commands = sortBy(commands, c => c.id)
     readme = this.replaceTag(readme, 'usage', flags.plugin ? '' : this.usage(config))
-    readme = this.replaceTag(readme, 'commands', flags.multi ? this.multiCommands(config, commands, flags.dir) : this.commands(config, commands, flags.plugin))
+    readme = this.replaceTag(readme, 'commands', flags.multi ? this.multiCommands(config, commands, flags.dir) : this.commands(config, commands))
     readme = this.replaceTag(readme, 'toc', this.toc(config, readme))
 
     readme = readme.trimRight()
@@ -139,12 +142,11 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
     fs.outputFileSync(file, doc)
   }
 
-  commands(config: Config.IConfig, commands: Config.Command[], plugin?: boolean): string {
+  commands(config: Config.IConfig, commands: Config.Command[]): string {
     return [
       ...commands.map(c => {
         const usage = this.commandUsage(config, c)
-        const cbin = plugin ? config.bin.replace(config.bin, 'commercelayer') : config.bin
-        return `* [\`${cbin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
+        return `* [\`${config.bin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
       }),
       '',
       ...commands.map(c => this.renderCommand(config, c)).map(s => s.trim() + '\n'),
