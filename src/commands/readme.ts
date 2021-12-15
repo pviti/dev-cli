@@ -142,9 +142,9 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
   commands(config: Config.IConfig, commands: Config.Command[], plugin?: boolean): string {
     return [
       ...commands.map(c => {
-        let usage = this.commandUsage(config, c)
-        if (plugin) usage = usage.replace(config.bin, 'commercelayer')
-        return `* [\`${config.bin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
+        const usage = this.commandUsage(config, c)
+        const cbin = plugin ? config.bin.replace(config.bin, 'commercelayer') : config.bin
+        return `* [\`${cbin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
       }),
       '',
       ...commands.map(c => this.renderCommand(config, c)).map(s => s.trim() + '\n'),
