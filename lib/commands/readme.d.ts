@@ -6,6 +6,7 @@ export default class Readme extends Command {
         dir: flags.IOptionFlag<string>;
         multi: import("@oclif/parser/lib/flags").IBooleanFlag<boolean>;
         plugin: import("@oclif/parser/lib/flags").IBooleanFlag<boolean>;
+        bin: flags.IOptionFlag<string | undefined>;
     };
     run(): Promise<void>;
     replaceTag(readme: string, tag: string, body: string): string;
@@ -13,7 +14,7 @@ export default class Readme extends Command {
     usage(config: Config.IConfig): string;
     multiCommands(config: Config.IConfig, commands: Config.Command[], dir: string): string;
     createTopicFile(file: string, config: Config.IConfig, topic: Config.Topic, commands: Config.Command[]): void;
-    commands(config: Config.IConfig, commands: Config.Command[], plugin?: boolean): string;
+    commands(config: Config.IConfig, commands: Config.Command[]): string;
     renderCommand(config: Config.IConfig, c: Config.Command): string;
     commandCode(config: Config.IConfig, c: Config.Command): string | undefined;
     private repo;
