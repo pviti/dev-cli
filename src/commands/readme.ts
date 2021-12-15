@@ -58,7 +58,7 @@ Customize the code URL prefix by setting oclif.repositoryPrefix in package.json.
     commands = uniqBy(commands, c => c.id)
     commands = sortBy(commands, c => c.id)
     readme = this.replaceTag(readme, 'usage', flags.plugin ? '' : this.usage(config))
-    readme = this.replaceTag(readme, 'commands', flags.multi ? this.multiCommands(config, commands, flags.dir) : this.commands(config, commands))
+    readme = this.replaceTag(readme, 'commands', flags.multi ? this.multiCommands(config, commands, flags.dir) : this.commands(config, commands, flags.plugin))
     readme = this.replaceTag(readme, 'toc', this.toc(config, readme))
 
     readme = readme.trimRight()
@@ -99,6 +99,7 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
   }
 
   multiCommands(config: Config.IConfig, commands: Config.Command[], dir: string): string {
+    console.log('MULTI')
     let topics = config.topics
     topics = topics.filter(t => !t.hidden && !t.name.includes(':'))
     topics = topics.filter(t => commands.find(c => c.id.startsWith(t.name)))
@@ -139,14 +140,18 @@ $ ${config.bin} [COMMAND] (--help | -h) for detailed information about CLI comma
     fs.outputFileSync(file, doc)
   }
 
-  commands(config: Config.IConfig, commands: Config.Command[]): string {
+  commands(config: Config.IConfig, commands: Config.Command[], plugin?: boolean): string {
+    console.log('COMMANDS')
     return [
       ...commands.map(c => {
         const usage = this.commandUsage(config, c)
         return `* [\`${config.bin} ${usage}\`](#${slugify.slug(`${config.bin}-${usage}`)})`
       }),
       '',
-      ...commands.map(c => this.renderCommand(config, c)).map(s => s.trim() + '\n'),
+      ...commands.map(c => this.renderCommand(config, c)).map(s => {
+        console.log(s)
+        return (plugin ? s.replace(config.bin, 'commercelayer') : s).trim() + '\n'
+      }),
     ].join('\n').trim()
   }
 

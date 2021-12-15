@@ -13,7 +13,7 @@ export default class Readme extends Command {
     usage(config: Config.IConfig): string;
     multiCommands(config: Config.IConfig, commands: Config.Command[], dir: string): string;
     createTopicFile(file: string, config: Config.IConfig, topic: Config.Topic, commands: Config.Command[]): void;
-    commands(config: Config.IConfig, commands: Config.Command[]): string;
+    commands(config: Config.IConfig, commands: Config.Command[], plugin?: boolean): string;
     renderCommand(config: Config.IConfig, c: Config.Command): string;
     commandCode(config: Config.IConfig, c: Config.Command): string | undefined;
     private repo;
